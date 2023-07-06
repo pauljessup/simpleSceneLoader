@@ -123,7 +123,7 @@ return {
                     data.id=layer+1
                     table.insert(self.layers, data.id, data)
                 end
-                if data.image and self.imageLookup[data.image]~=nil then
+                if data.image then
                     self:setBackgroundImage(data.id, data.image)
                 end
             end,
@@ -253,11 +253,11 @@ return {
                         love.graphics.clear()
 
 
-                        if layer.image~=nil and self.sceneImages[layer.image]~=nil  then
+                        if layer.image~=nil then
                             if self.customFunc.layers~=nil and self.customFunc.layers.draw~=nil then 
                                 self.customFunc.layers.draw(self, layer, 0, 0) 
                             else
-                                love.graphics.draw(self.sceneImages[layer.image].image, 0, 0)
+                                love.graphics.draw(layer.image, 0, 0)
                             end
                         end
 
@@ -267,7 +267,7 @@ return {
                         love.graphics.setColor(c[1], c[2], c[3], layer.alpha)
                         if layer.tiled==true and layer.image~=nil then
                                 layer.canvas:setWrap("repeat", "repeat")
-                                local quad = love.graphics.newQuad(-layer.x*(self.scale.x*layer.scale), -layer.y*(self.scale.y*layer.scale), love.graphics.getWidth(), love.graphics.getHeight(), self.sceneImages[layer.image].image:getWidth(), self.sceneImages[layer.image].image:getHeight())	
+                                local quad = love.graphics.newQuad(-layer.x*(self.scale.x*layer.scale), -layer.y*(self.scale.y*layer.scale), love.graphics.getWidth(), love.graphics.getHeight(), layer.image:getWidth(), layer.image:getHeight())	
                                 love.graphics.draw(layer.canvas, quad, 0, 0, 0, (self.scale.x*layer.scale), (self.scale.y*layer.scale))
                         else
                             local x, y=(layer.scroll.speed*layer.scale)*self.x, (layer.scroll.speed*layer.scale)*self.y
@@ -284,10 +284,8 @@ return {
             end,
             --relative movement.
             moveCamera=function(self, x, y)
-                if self.cooldown==0.0 then
                     self.x=math.floor(self.x+x)
                     self.y=math.floor(self.y+y)
-                end
             end,
             
             cameraClampLayer=function(self, layer)
@@ -367,6 +365,12 @@ return {
                 layer.x=layer.x+(move.x)
                 layer.y=layer.y+(move.y)
             end,
+            stopAllMusic=function(self)
+                for i,v in ipairs(self.sceneMusic) do
+                    v.music:stop()
+                end
+                self.playing=false
+            end,
             --loop plays the music set for this scene.
             playMusic=function(self)
                 self:stopAllMusic()
@@ -385,5 +389,15 @@ return {
                         self:drawLayer(layer)
                 end
                 if self.customFunc.draw~=nil then self.customFunc.draw(self) end
+            end,
+            addObjectType=function(self, type)
+                if type.image~=nil then 
+                    type.imageName=type.image
+                    type.image=love.graphics.newImage(self.directories.sprites .. type.image) 
+                end
+                if type.width==nil then type.width=type.image:getWidth() end
+                if type.height==nil then type.height=type.image:getHeight() end
+  
+                self.objectTypes[type.type]=type
             end,
 }
