@@ -235,7 +235,7 @@ return {
                     if object.layer==layer then
                             local type=self.objectTypes[object.type]
                             if type.draw~=nil then
-                                    type:draw(object, self) 
+                                    type:draw(object, self)
                             elseif type.image~=nil then
                                 love.graphics.draw(type.image, object.x, object.y)
                             end
@@ -331,10 +331,11 @@ return {
                 return x, y     
             end,
             layertoScreen=function(self, layer, x, y)
-                local layer=self.layers[layer]
-                local scale=(self.scale.x*layer.scale)
-                x=(x*scale)+(layer.x*scale)
-                y=(y*scale)+(layer.y*scale)
+                if self.layers[layer]~=nil then layer=self.layers[layer] end
+                local ox, oy=(layer.scroll.speed*layer.scale)*self.x, (layer.scroll.speed*layer.scale)*self.y
+                x=(ox*-1)+(x*(self.scale.x*layer.scale))+(layer.x)*(self.scale.x*layer.scale)
+                y=(oy*-1)+(y*(self.scale.x*layer.scale))+(layer.y)*(self.scale.y*layer.scale)
+
                 return x, y
             end,
             --amount to move.
@@ -389,6 +390,7 @@ return {
                         self:drawLayer(layer)
                 end
                 if self.customFunc.draw~=nil then self.customFunc.draw(self) end
+                local x, y=self:layertoScreen(3, 211, 239)
             end,
             addObjectType=function(self, type)
                 if type.image~=nil then 
