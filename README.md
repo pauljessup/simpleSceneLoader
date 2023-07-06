@@ -1,2 +1,4 @@
 # simpleSceneLoader
-Loads scenes/maps/layers made with simpleSceneDesigner for LOVE/Love2d Lua games
+Loads scenes/maps/layers made with simpleSceneDesigner for LOVE/Love2d Lua games. This just loads the scenes, and then plays them, but does so in a streamlined, optimized way. The simpleSceneDesigner itself preloads a lot of graphics/etc, which can eat up memory in larger games with big scenes/etc. Using the sceneLoader for the final game will only load graphics/etc when necassary at run time. Also, the code is much smaller, since it's only loading/playing, and does not need to include all of the editor code.
+
+If you're using a stand alone version of the simpleSceneDesigner, or you don't want to include the designer itself in your released game, this would be the library to use. The main.lua is an example of using the loader, similar to the other example. But really, all you need to do is include the simpleSceneLoader.lua to get started, and load the scene file you wish to use.
